@@ -195,7 +195,7 @@ app.get("/api/localtunnel/port", async (req, res) => {
 app.get("/api/localtunnel/ping", async (req, res) => {
   try {
     const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain", "utf-8");
-    await axios.get("http://" + subdomain + ".lt.airin1.com/healthcheck");
+    await axios.get(`http://${subdomain}.lt.airin1.com/healthcheck`);
     res.sendStatus(204);
   } catch (err) {
     console.error(err);
