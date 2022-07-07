@@ -9,6 +9,8 @@ const port = 3000;
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const axios = axiosRaw.create({ timeout: 4000 });
 const axiosNodeRed = axiosRaw.create({
   baseURL: "http://127.0.0.1:1880",
