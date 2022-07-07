@@ -95,7 +95,7 @@ async function getAvailableFCU(modbusId) {
 
     return result;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return [];
   }
 }
@@ -199,7 +199,6 @@ app.get("/api/localtunnel/port", async (req, res) => {
 app.get("/api/localtunnel/ping", async (req, res) => {
   try {
     const subdomain = getSubdomain();
-    console.log(subdomain);
     await axios.get(`http://${subdomain}.lt.airin1.com/healthcheck`);
     res.sendStatus(204);
   } catch (err) {
