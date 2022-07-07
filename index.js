@@ -1,5 +1,6 @@
 require("dotenv").config(__dirname + "/.env");
 const fs = require("fs");
+const path = require('path');
 const express = require("express");
 const axiosRaw = require("axios");
 const app = express();
@@ -26,6 +27,10 @@ const axiosAirin1 = axiosRaw.create({
 });
 
 app.use(express.json());
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '/index.html'));
+});
 
 app.post("/api/localtunnel/:subdomain", async (req, res) => {
   const { stdout, stderr } = await exec(
