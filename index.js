@@ -59,7 +59,7 @@ async function readInputRegisterNodeRed(modbusId, regad, len, retryCount = 0) {
 
     return response.data;
   } catch (err) {
-    console.error(err.response);
+    // console.error(err.response);
     await wait(1000);
     if (retryCount < 3) {
       return await readInputRegisterNodeRed(
