@@ -49,7 +49,7 @@ app.post("/api/fixport/:port", async (req, res) => {
 });
 
 function getSubdomain() {
-  return getSubdomain().trim();
+  return fs.readFileSync("../localtunnel-healthcheck/subdomain", "utf-8").trim();
 }
 
 async function readInputRegisterNodeRed(modbusId, regad, len, retryCount = 0) {
