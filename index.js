@@ -32,7 +32,7 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-app.post("/api/localtunnel/:subdomain", async (req, res) => {
+app.post("/api/localtunnel/subdomain/:subdomain", async (req, res) => {
   const { stdout, stderr } = await exec(
     __dirname + "/localtunnel.sh " + req.params.subdomain
   );
