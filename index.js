@@ -167,7 +167,7 @@ app.post("/api/airin1/devices", async (req, res) => {
 app.get("/api/localtunnel/host", async (req, res) => {
   try {
     const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain");
-    res.send({ subdomain });
+    res.send(subdomain);
   } catch (err) {
     console.error(err);
     res.sendStatus(500);
@@ -178,7 +178,7 @@ app.get("/api/localtunnel/port", async (req, res) => {
   try {
     const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain");
     let response = await axiosLocaltunnel.get("/api/fixport/" + subdomain);
-    res.send(response.data);
+    res.send(response.data.port || 0);
   } catch (err) {
     console.error(err);
     res.sendStatus(500);

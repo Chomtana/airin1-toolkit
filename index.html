@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Airin1 Pi Config</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0-beta1/css/bootstrap.min.css" integrity="sha512-o/MhoRPVLExxZjCFVBsm17Pkztkzmh7Dp8k7/3JrtNCHh0AQ489kwpfA3dPSHzKDe8YCuEhxXq3Y71eb/o6amg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0-beta1/js/bootstrap.min.js" integrity="sha512-Hqe3s+yLpqaBbXM6VA0cnj/T56ii5YjNrMT9v+us11Q81L0wzUG0jEMNECtugqNu2Uq5MSttCg0p4KK0kCPVaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+
+  <body>
+    <div class="loading container text-center">
+      <h1>Loading...</h1>
+    </div>
+    
+    <div class="loaded container">
+      <h1 class="text-center">Airin1 Pi Config</h1>
+
+      <hr />
+  
+      <!-- Head -->
+      <div>
+        <div id="subdomain" class="status-up text-danger"><a target="_blank"><h3></h3></a></div>
+        <div id="fixport" class="status-up text-danger"><h3>Port: <span></span></h3></div>
+        <div id="uptime" class="status-up text-danger"><h3>Uptime: <span></span></h3></div>
+        <div id="total_modbus" class="status-modbus text-danger"><h3>Total Modbus: <span></span></h3></div>
+        <div id="total_devices" class="status-modbus text-danger"><h3>Total Devices: <span></span></h3></div>
+        <div>
+          <u>
+            <h3>Don't forget to add air to airin1</h3>
+          </u>
+        </div>
+      </div>
+  
+      <hr />
+  
+      <div>
+        <div><h2>Control Panel</h2></div>
+
+        <div class="mt-3">
+          <div class="w-100 my-1">
+            <button class="btn btn-primary">Set Subdomain</button>
+          </div>
+
+          <div class="w-100 my-1">
+            <button class="btn btn-warning">Fix Port</button>
+          </div>
+
+          <div class="w-100 my-1">
+            <a class="btn btn-danger" href="http://127.0.0.1:1880" target="_blank">Config Node-RED</a>
+          </div>
+        </div>
+      </div>
+
+      <hr/>
+    </div>
+
+    <script>
+      const UPTIME_CHECK_INTERVAL = 5;
+
+      let subdomain, port;
+      let uptime = 0, downtime = 0;
+      let currentlyUp = false;
+      let modbusFcuList = {};
+
+      function updateHtml() {
+        $("#loading").hide();
+        $("#loaded").show();
+
+        const uptimePercentage = uptime / (uptime + downtime);
+
+        if (uptimePercentage >= 0.95) {
+          $(".status-up").removeClass("text-danger");
+          $(".status-up").addClass("text-success");
+        } else {
+          $(".status-up").addClass("text-danger");
+          $(".status-up").removeClass("text-success");
+        }
+
+        $("#subdomain a").attr("href", "http://" + subdomain + ".lt.airin1.com")
+        $("#subdomain h3").text(subdomain + ".lt.airin1.com");
+
+        $("#fixport span").text(port || "No port");
+
+        $("#uptime span").text(`${uptime}/${downtime} (${Math.floor(uptimePercentage * 100)} %)`);
+
+        const totalModbus = Ibject.keys(modbusFcuList).length;
+        let totalDevices = 0;
+
+        for (let modbusId in modbusFcuList) {
+          totalDevices += modbusFcuList[modbusId].length;
+        }
+
+        if (totalDevices > 0) {
+          $(".status-modbus").removeClass("text-danger");
+          $(".status-modbus").addClass("text-success");
+        } else {
+          $(".status-modbus").addClass("text-danger");
+          $(".status-modbus").removeClass("text-success");
+        }
+
+        $("#total_devices span").text(totalDevices);
+        $("#total_modbus span").text(totalModbus);
+      }
+
+      async function uptimeCheck() {
+        try {
+          currentlyUp = false;
+          await axios.post('/api/localtunnel/ping');
+          uptime += 5;
+          currentlyUp = true;
+        } catch (err) {
+          console.error(err);
+          downtime += 5;
+        }
+      }
+
+      async function refreshData() {
+        try {
+          subdomain = (await axios.get('/api/localtunnel/host')).data;
+          port = (await axios.get('/api/localtunnel/port')).data;
+
+          await uptimeCheck();
+
+          let newModbusFcuList = {};
+
+          for (let modbusId = 39990; modbusId < 39990 + 32; modbusId++) {
+            try {
+              let fcuList = (await axios.get('/api/modbus/' + modbusId)).data;
+              if (fcuList.length > 0) {
+                newModbusFcuList[modbusId] = fcuList;
+              } else {
+                break;
+              }
+            } catch (err) {
+              console.error(err);
+              break;
+            }
+          }
+
+          modbusFcuList = newModbusFcuList;
+        } catch (err) {
+          console.error(err);
+          // window.alert("มีข้อผิดพลาดเกิดขึ้น");
+        } finally {
+          updateHtml();
+        }
+      }
+
+      setInterval(refreshData, 5000);
+    </script>
+
+  </body>
+</html>
