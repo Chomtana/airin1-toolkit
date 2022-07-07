@@ -105,7 +105,7 @@ app.post("/api/airin1/devices", async (req, res) => {
     const fcuList = await getAvailableFCU(req.params.modbusId);
     const buildingResponse = await axiosAirin1.get("/api/buildings/" + req.params.buildingId);
   
-    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain");
+    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain", "utf-8");
   
     for (let fcu of fcuList) {
       await axiosAirin1.post(
@@ -173,7 +173,7 @@ app.post("/api/airin1/devices", async (req, res) => {
 
 app.get("/api/localtunnel/host", async (req, res) => {
   try {
-    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain");
+    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain", "utf-8");
     res.send({ subdomain });
   } catch (err) {
     console.error(err);
@@ -183,7 +183,7 @@ app.get("/api/localtunnel/host", async (req, res) => {
 
 app.get("/api/localtunnel/port", async (req, res) => {
   try {
-    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain");
+    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain", "utf-8");
     let response = await axiosLocaltunnel.get("/api/fixport/" + subdomain);
     res.send(response.data);
   } catch (err) {
@@ -194,7 +194,7 @@ app.get("/api/localtunnel/port", async (req, res) => {
 
 app.get("/api/localtunnel/ping", async (req, res) => {
   try {
-    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain");
+    const subdomain = fs.readFileSync("../localtunnel-healthcheck/subdomain", "utf-8");
     await axios.get("http://" + subdomain + ".lt.airin1.com/healthcheck");
     res.sendStatus(204);
   } catch (err) {

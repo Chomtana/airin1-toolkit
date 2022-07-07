@@ -113,7 +113,7 @@
       async function uptimeCheck() {
         try {
           currentlyUp = false;
-          await axios.post('/api/localtunnel/ping');
+          await axios.get('/api/localtunnel/ping');
           uptime += 5;
           currentlyUp = true;
         } catch (err) {
