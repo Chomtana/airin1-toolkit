@@ -124,8 +124,8 @@
 
       async function refreshData() {
         try {
-          subdomain = (await axios.get('/api/localtunnel/host')).data;
-          port = (await axios.get('/api/localtunnel/port')).data;
+          subdomain = (await axios.get('/api/localtunnel/host')).data.subdomain;
+          port = (await axios.get('/api/localtunnel/port')).data.port || 0;
 
           await uptimeCheck();
 
