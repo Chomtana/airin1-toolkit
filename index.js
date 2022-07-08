@@ -199,7 +199,8 @@ app.get("/api/localtunnel/port", async (req, res) => {
 app.get("/api/localtunnel/ping", async (req, res) => {
   try {
     const subdomain = getSubdomain();
-    await axios.get(`http://${subdomain}.lt.airin1.com/healthcheck`);
+    // await axios.get(`http://${subdomain}.lt.airin1.com/healthcheck`);
+    await axios.get(`http://asl3-airin1.lt.airin1.com/healthcheck`);
     res.sendStatus(204);
   } catch (err) {
     console.error(err);
