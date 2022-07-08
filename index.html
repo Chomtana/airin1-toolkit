@@ -126,9 +126,14 @@
         try {
           subdomain = (await axios.get('/api/localtunnel/host')).data.subdomain;
           port = (await axios.get('/api/localtunnel/port')).data.port || 0;
+        } catch (err) {
+          console.error(err);
+          downtime += 5;
+        }
 
-          await uptimeCheck();
+        await uptimeCheck();
 
+        try {
           let newModbusFcuList = {};
 
           for (let modbusId = 39990; modbusId < 39990 + 32; modbusId++) {
