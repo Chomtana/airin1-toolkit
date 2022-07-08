@@ -76,7 +76,7 @@
 
         const uptimePercentage = uptime / (uptime + downtime);
 
-        if (uptimePercentage >= 0.95) {
+        if (uptimePercentage >= 0.9) {
           $(".status-up").removeClass("text-danger");
           $(".status-up").addClass("text-success");
         } else {
