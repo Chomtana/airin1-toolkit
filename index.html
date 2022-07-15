@@ -130,6 +130,7 @@
           }
 
           html.push('</ul>')
+          html.push('<div><button class="btn btn-primary" onclick="addAir(' + modbusId + ')">Add to Airin1</button></div>')
           html.push('<hr />')
 
           $("#detected-air-container").html(html.join('\n'));
@@ -211,6 +212,31 @@
           
           window.location.reload();
         }
+      }
+
+      async function addAir(modbusId) {
+        if (!modbusFcuList[modbusId] || modbusFcuList[modbusId].length == 0) {
+          window.alert("Modbus ID doesn't has any air");
+          return;
+        }
+
+        let buildingId = parseInt(window.prompt('Please enter building ID'));
+
+        if (!buildingId) {
+          return;
+        }
+
+        let prefix = window.prompt("Please enter prefix (Shouldn't be long, around 4 characters is good)");
+
+        if (!prefix) {
+          return;
+        }
+
+        await axios.post('/api/airin1/devices', {
+          modbusId,
+          buildingId,
+          prefix,
+        })
       }
 
       function configNodeRed() {

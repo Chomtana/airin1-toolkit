@@ -106,8 +106,8 @@ app.get("/api/modbus/:modbusId", async (req, res) => {
 
 app.post("/api/airin1/devices", async (req, res) => {
   try {
-    const fcuList = await getAvailableFCU(req.params.modbusId);
-    const buildingResponse = await axiosAirin1.get("/api/buildings/" + req.params.buildingId);
+    const fcuList = await getAvailableFCU(req.body.modbusId);
+    const buildingResponse = await axiosAirin1.get("/api/buildings/" + req.body.buildingId);
   
     const subdomain = getSubdomain();
   
@@ -137,7 +137,7 @@ app.post("/api/airin1/devices", async (req, res) => {
               },
             },
             device_control_air: {
-              device_iot_id: `http/${subdomain}.lt.airin1.com:${req.params.modbusId}/${fcu}`,
+              device_iot_id: `http/${subdomain}.lt.airin1.com:${req.body.modbusId}/${fcu}`,
               device_air_brand_id: 1,
               device_air_type_id: 2,
               device_wifi_ssid: "",
