@@ -187,7 +187,7 @@
 
       setInterval(refreshData, 5000);
 
-      function setSubdomain() {
+      async function setSubdomain() {
         const subdomain = window.prompt("Please enter subdomain");
 
         if (subdomain) {
@@ -197,7 +197,7 @@
         }
       }
 
-      function fixPort() {
+      async function fixPort() {
         const port = window.prompt("Please enter port (enter 0 to disable fix port)");
 
         if (port && !isNaN(parseInt(port))) {
