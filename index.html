@@ -221,21 +221,23 @@
         }
 
         let buildingId = parseInt(window.prompt('Please enter building ID'));
-
-        if (!buildingId) {
-          return;
-        }
+        if (!buildingId) return;
 
         let prefix = window.prompt("Please enter prefix (Shouldn't be long, around 4 characters is good)");
+        if (!prefix) return;
 
-        if (!prefix) {
-          return;
-        }
+        let email = window.prompt('Please enter Airin1 email');
+        if (!email) return;
+
+        let password = window.prompt('Please enter Airin1 password');
+        if (!password) return;
 
         await axios.post('/api/airin1/devices', {
           modbusId,
           buildingId,
           prefix,
+          email,
+          password,
         })
       }
 

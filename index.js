@@ -20,13 +20,6 @@ const axiosLocaltunnel = axiosRaw.create({
   baseURL: "http://lt.airin1.com",
   timeout: 4000,
 });
-const axiosAirin1 = axiosRaw.create({
-  baseURL: "https://api.airin1.com",
-  timeout: 4000,
-  headers: {
-    Authorization: "Bearer " + process.env.ADVANCE_TOKEN,
-  },
-});
 
 app.use(express.json());
 
@@ -106,6 +99,19 @@ app.get("/api/modbus/:modbusId", async (req, res) => {
 
 app.post("/api/airin1/devices", async (req, res) => {
   try {
+    const loginResponse = await axios.post('https://api.airin1.com/api/login', {
+      "password": req.body.password,
+      "email": req.body.email,
+    })
+
+    const axiosAirin1 = axiosRaw.create({
+      baseURL: "https://api.airin1.com",
+      timeout: 4000,
+      headers: {
+        Authorization: "Bearer " + loginResponse.data.token,
+      },
+    });
+
     const fcuList = await getAvailableFCU(req.body.modbusId);
     const buildingResponse = await axiosAirin1.get("/api/buildings/" + req.body.buildingId);
   
