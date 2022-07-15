@@ -199,9 +199,16 @@
       }
 
       async function fixPort() {
-        const port = window.prompt("Please enter port (enter 0 to disable fix port)");
+        let port = window.prompt("Please enter port (10000 - 30000) (enter 0 to disable fix port)");
 
         if (port && !isNaN(parseInt(port))) {
+          port = parseInt(port);
+
+          if (port < 10000 || port > 30000) {
+            window.alert("Port must be between 10000 - 30000");
+            return;
+          }
+
           await axios.post('/api/fixport/' + port);
 
           if (parseInt(port) == 0) {
