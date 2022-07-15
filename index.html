@@ -45,21 +45,30 @@
         <div><h2>Control Panel</h2></div>
 
         <div class="mt-3">
+          
           <div class="w-100 my-1">
-            <button class="btn btn-primary">Set Subdomain</button>
+            <button class="btn btn-primary" onclick="setSubdomain()">Set Subdomain</button>
           </div>
 
           <div class="w-100 my-1">
-            <button class="btn btn-warning">Fix Port</button>
+            <button class="btn btn-warning" onclick="fixPort()">Fix Port</button>
           </div>
 
           <div class="w-100 my-1">
-            <a class="btn btn-danger" href="http://127.0.0.1:1880" target="_blank">Config Node-RED</a>
+            <a class="btn btn-danger" onclick="configNodeRed()" target="_blank">Config Node-RED</a>
           </div>
         </div>
       </div>
 
       <hr/>
+
+      <div>
+        <div><h2>Detected air</h2></div>
+
+        <div id="detected-air-container">
+          
+        </div>
+      </div>
     </div>
 
     <script>
@@ -108,6 +117,23 @@
 
         $("#total_devices span").text(totalDevices);
         $("#total_modbus span").text(totalModbus);
+
+        // Update detected air
+        for (let modbusId in modbusFcuList) {
+          let html = [
+            '<div>Modbus ID: ' + modbusId + '</div>',
+            '<ul>',
+          ];
+
+          for (let fcu of modbusFcuList[modbusId]) {
+            html.push(`<li>${fcu} (${Math.floor(fcu / 16) + 1}-${(fcu % 16).toString().padStart(2, '0')}) ${2000 + (fcu * 3)} ${2000 + (fcu * 6)}</li>`);
+          }
+
+          html.push('</ul>')
+          html.push('<hr />')
+
+          $("#detected-air-container").html(html.join('\n'));
+        }
       }
 
       async function uptimeCheck() {
@@ -160,6 +186,36 @@
       }
 
       setInterval(refreshData, 5000);
+
+      function setSubdomain() {
+        const subdomain = window.prompt("Please enter subdomain");
+
+        if (subdomain) {
+          await axios.post('/api/localtunnel/subdomain/' + subdomain);
+          window.alert("Subdomain changed to " + subdomain + ".lt.airin1.com");
+          window.location.reload();
+        }
+      }
+
+      function fixPort() {
+        const port = window.prompt("Please enter port (enter 0 to disable fix port)");
+
+        if (port && !isNaN(parseInt(port))) {
+          await axios.post('/api/fixport/' + port);
+
+          if (parseInt(port) == 0) {
+            window.alert("Fix port disabled");
+          } else {
+            window.alert("Port fixed to " + port);
+          }
+          
+          window.location.reload();
+        }
+      }
+
+      function configNodeRed() {
+        window.open(`${window.location.protocol}//${window.location.host}:1880`);
+      }
     </script>
 
   </body>
