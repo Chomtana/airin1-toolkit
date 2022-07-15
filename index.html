@@ -204,7 +204,7 @@
         if (port && !isNaN(parseInt(port))) {
           port = parseInt(port);
 
-          if (port < 10000 || port > 30000) {
+          if (port != 0 && (port < 10000 || port > 30000)) {
             window.alert("Port must be between 10000 - 30000");
             return;
           }
